@@ -11,7 +11,7 @@ pool:
 
 variables:
   solution: '**/*.sln'
-  buildPlatform: 'x86|x64|ARM'
+  buildPlatform: 'ARM'
   buildConfiguration: 'Release'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
@@ -30,7 +30,7 @@ steps:
 
 - task: VSBuild@1
   inputs:
-    platform: 'x86'
+    platform: '$(buildPlatform)'
     solution: '$(solution)'
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)"
@@ -40,3 +40,15 @@ steps:
                   /p:AppxPackageSigningEnabled=true
                   /p:PackageCertificateThumbprint=""
                   /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)"'
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '**\bin\$(BuildConfiguration)\**'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
