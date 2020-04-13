@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeIdentifiers>win10-arm</RuntimeIdentifiers>
     <RootNamespace>Pi3CameraTrigger</RootNamespace>
+    <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
 
   <ItemGroup>
