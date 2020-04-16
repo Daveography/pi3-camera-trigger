@@ -2,8 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Device.Gpio;
-using Pi3CameraTrigger.Model.Gpio;
+using Windows.Devices.Gpio;
 
 namespace Pi3CameraTrigger.Model.Camera
 {
@@ -16,20 +15,28 @@ namespace Pi3CameraTrigger.Model.Camera
 
     public sealed class ShutterRemote : IShutterRemote
     {
+        private readonly GpioController _gpio;
         private readonly IGpioConfiguration _gpioConfig;
         private readonly IShutterRemoteConfiguration _triggerConfig;
+
+        private readonly GpioPin _focusPin;
+        private readonly GpioPin _shutterPin;
+
         private readonly StateMachine<ShutterRemoteState, ShutterRemoteTrigger> _remoteState;
 
-        public ShutterRemote(IGpioConfiguration gpioConfig, IShutterRemoteConfiguration triggerConfig)
+        public ShutterRemote(GpioController gpio, IGpioConfiguration gpioConfig, IShutterRemoteConfiguration triggerConfig)
         {
+            _gpio = gpio;
             _gpioConfig = gpioConfig;
             _triggerConfig = triggerConfig;
 
-            _gpioConfig.FocusPin.Open(PinMode.Output);
-            _gpioConfig.FocusPin.Write(PinValue.Low);
+            _focusPin = gpio.OpenPin(gpioConfig.FocusPin);
+            _focusPin.Write(GpioPinValue.Low);
+            _focusPin.SetDriveMode(GpioPinDriveMode.Output);
 
-            _gpioConfig.ShutterActuationPin.Open(PinMode.Output);
-            _gpioConfig.ShutterActuationPin.Write(PinValue.Low);
+            _shutterPin = gpio.OpenPin(gpioConfig.ShutterActuationPin);
+            _shutterPin.Write(GpioPinValue.Low);
+            _shutterPin.SetDriveMode(GpioPinDriveMode.Output);
 
             _remoteState = ConfigureStateMachine();
         }
@@ -77,22 +84,22 @@ namespace Pi3CameraTrigger.Model.Camera
         private void GpioFocus()
         {
             Debug.WriteLine("{0:hh:mm:ss.fff} Actuating remote trigger focus", DateTime.Now);
-            _gpioConfig.FocusPin.Write(PinValue.High);
+            _focusPin.Write(GpioPinValue.High);
             Task.Delay(TimeSpan.FromSeconds(_triggerConfig.FocusDurationSeconds)).Wait();
         }
 
         private void GpioFire()
         {
             Debug.WriteLine("{0:hh:mm:ss.fff} Actuating remote trigger fire", DateTime.Now);
-            _gpioConfig.ShutterActuationPin.Write(PinValue.High);
+            _shutterPin.Write(GpioPinValue.High);
             Task.Delay(TimeSpan.FromSeconds(_triggerConfig.ShutterActuationSeconds)).Wait();
         }
 
         private void GpioRelease()
         {
             Debug.WriteLine("{0:hh:mm:ss.fff} Returning remote trigger to rest state", DateTime.Now);
-            _gpioConfig.FocusPin.Write(PinValue.Low);
-            _gpioConfig.ShutterActuationPin.Write(PinValue.Low);
+            _focusPin.Write(GpioPinValue.Low);
+            _shutterPin.Write(GpioPinValue.Low);
         }
     }
 }

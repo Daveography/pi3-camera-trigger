@@ -3,40 +3,44 @@
     "tasks": [
         {
             "label": "build",
-            "command": "dotnet",
-            "type": "process",
+            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\msbuild.exe",
             "args": [
-                "build",
-                "${workspaceFolder}/pi3-camera-trigger.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
+                "pi3-camera-trigger.sln",
+                "/t:build",
+                "/p:platform=ARM",
+                "/p:configuration=Release",
+                "/p:VisualStudioVersion=16.0",
+                "/p:GenerateFullPaths=true",
+                "/p:AppxBundlePlatforms=\"ARM\"",
+                "/p:AppxPackageDir=\"AppxPackages\"",
+                "/p:AppxBundle=Always",
+                "/p:UapAppxPackageBuildMode=StoreUpload",
+                "/p:AppxPackageSigningEnabled=true",
+                "/p:PackageCertificateThumbprint=\"\"",
+                "/p:PackageCertificateKeyFile=\".vscode\\SigningKey.pfx\""
+            ]
         },
         {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
+            "label": "package",
+            "command": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.18362.0\\x64\\makeappx.exe",
             "args": [
-                "publish",
-                "${workspaceFolder}/pi3-camera-trigger.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "pack",
+                "/o",
+                "/v",
+                "/m",
+                "appxmanifest.xml",
+                "/f",
+                "mapping.txt",
+                "/p",
+                "bin\\pi3-camera-trigger.appx"
             ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "${workspaceFolder}/pi3-camera-trigger.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+            "dependsOn": [
+                "build"
             ],
-            "problemMatcher": "$msCompile"
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
