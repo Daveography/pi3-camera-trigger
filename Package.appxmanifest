@@ -10,7 +10,7 @@
   <Identity
     Name="Pi3CameraTrigger-uwp"
     Publisher="CN=dave"
-    Version="1.0.3.0"
+    Version="1.0.5.0"
     ProcessorArchitecture="arm" />
 
   <mp:PhoneIdentity PhoneProductId="9747e2f5-ad67-4f8a-aa8a-d11e9db26c50" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>

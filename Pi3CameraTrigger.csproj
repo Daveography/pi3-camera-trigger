@@ -119,6 +119,8 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="pi3-camera-trigger-breadboard.fzz" />
+    <None Include="pi3-camera-trigger-hat.fzz" />
     <None Include="Pi3CameraTrigger_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
